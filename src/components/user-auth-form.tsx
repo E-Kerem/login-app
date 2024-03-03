@@ -9,8 +9,10 @@ import { Label } from "@/components/label"
 import { useRouter } from 'next/router';
 import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient"
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const MAX_ATTEMPTS = 3;
+  const [failedAttempts, setFailedAttempts] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
