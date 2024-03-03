@@ -14,25 +14,32 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
+  const [errorMessage, setErrorMessage] = React.useState<string>(''); // State to hold error messages
 
   async function onSubmit(event: React.SyntheticEvent) {
     const router = useRouter();
 
-    async function onSubmit(event: React.SyntheticEvent) {
       event.preventDefault();
       setIsLoading(true);
-    
+      setErrorMessage(''); // Clear any existing error messages
+  
       try {
-        const response = await signInWithEmail(email, password);
-        if (response) {
-          router.push('@src/app/loggedIn'); // Navigate to the success page
+        const data = await signInWithEmail(email, password);
+        if (data.user && data.session) {
+          // Assuming you want to redirect upon a successful sign-in
+          router.push('/path/to/success/page'); // Adjust the path as needed
+        } else {
+          // This else block might not be necessary if all errors are thrown, but it's here for completeness
+          setErrorMessage('Failed to sign in. Please try again.');
         }
       } catch (error) {
         console.error('Sign in error:', error);
+        setErrorMessage('An unexpected error occurred. Please try again.');
       } finally {
         setIsLoading(false);
       }
-    }
+
+    
   }
 
   const handleSignInWithGoogle = async () => {
@@ -87,6 +94,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {/* Conditionally render the error message here */}
+            {errorMessage && (
+              <div id="error-message" style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</div>
+            )}
           </div>
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
@@ -95,8 +106,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Button>
         </div>
       </form>
-      {/* Other components remain the same */}
-      <Button variant="outline" type="button" onClick={handleSignInWithGoogle} disabled={isLoading}>
+      {/* Google Sign-in Button */}
+      <Button variant="outline" type="button" onClick={handleSignInWithGoogle} disabled={isLoading} data-testid="google-login-button">
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
@@ -104,7 +115,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         )}
         Google
       </Button>
-      <Button variant="outline" type="button" onClick={handleSignInWithFacebook} disabled={isLoading}>
+      {/* Facebook Sign-in Button */}
+      <Button variant="outline" type="button" onClick={handleSignInWithFacebook} disabled={isLoading} data-testid="facebook-login-button">
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
