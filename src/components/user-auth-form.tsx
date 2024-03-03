@@ -9,8 +9,10 @@ import { Label } from "@/components/label"
 import { useRouter } from 'next/router';
 import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient"
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const MAX_ATTEMPTS = 3;
+  const [failedAttempts, setFailedAttempts] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -21,14 +23,19 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     async function onSubmit(event: React.SyntheticEvent) {
       event.preventDefault();
       setIsLoading(true);
-    
+
       try {
         const response = await signInWithEmail(email, password);
         if (response) {
-          router.push('@src/app/loggedIn'); // Navigate to the success page
+          router.push('/loggedIn');
+          setFailedAttempts(0);
         }
       } catch (error) {
         console.error('Sign in error:', error);
+        setFailedAttempts((attempts) => attempts + 1);
+        if (failedAttempts + 1 >= MAX_ATTEMPTS) {
+          alert('Your account has been locked due to multiple failed sign-in attempts.');
+        }
       } finally {
         setIsLoading(false);
       }
