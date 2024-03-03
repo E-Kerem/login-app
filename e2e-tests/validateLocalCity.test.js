@@ -1,5 +1,6 @@
 const supabase = require('./supabaseClient');
 
+
 async function validateLocalCity(email, expectedCity) {
   const { data, error } = await supabase
     .from('user_signins')

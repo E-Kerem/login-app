@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:validateLocalCity": "node e2e-tests/validateLocalCity.test.js",
+    "test:accountLockout": "node e2e-tests/testAccountLockout.test.js",
     "test:login:success": "node e2e-tests/successfulEmailLogin.test.js",
     "test:login:failure": "node e2e-tests/failedEmailLogin.test.js",
     "test:oauth:google": "node e2e-tests/googleOAuthLogin.test.js",

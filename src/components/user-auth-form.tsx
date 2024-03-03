@@ -6,11 +6,15 @@ import { Icons } from "@/components/icons"
 import { Button } from "@/components/button"
 import { Input } from "@/components/input"
 import { Label } from "@/components/label"
-import { useRouter } from 'next/router';
 import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient"
+import { useRouter } from 'next/router';
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { 
+  
+}
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const router = useRouter(); 
   const MAX_ATTEMPTS = 3;
   const [failedAttempts, setFailedAttempts] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -19,33 +23,29 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [errorMessage, setErrorMessage] = React.useState<string>(''); // State to hold error messages
 
   async function onSubmit(event: React.SyntheticEvent) {
-    const router = useRouter();
+    event.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(''); // Clear any existing error messages
 
-      event.preventDefault();
-      setIsLoading(true);
-      setErrorMessage(''); // Clear any existing error messages
-  
-      try {
-        const data = await signInWithEmail(email, password);
-        if (data.user && data.session) {
-          // Assuming you want to redirect upon a successful sign-in
-          router.push('/path/to/success/page'); // Adjust the path as needed
-        } else {
-          // This else block might not be necessary if all errors are thrown, but it's here for completeness
-          setErrorMessage('Failed to sign in. Please try again.');
-        }
-      } catch (error) {
-        console.error('Sign in error:', error);
-        setErrorMessage('An unexpected error occurred. Please try again.');
-      } finally {
-        setIsLoading(false);
+    try {
+      const data = await signInWithEmail(email, password);
+      if (data.user && data.session) {
+
+      } else {
+        // This else block might not be necessary if all errors are thrown, but it's here for completeness
+        setErrorMessage('Failed to sign in. Please try again.');
       }
-
-    
+    } catch (error) {
+      console.error('Sign in error:', error);
+      setErrorMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleSignInWithGoogle = async () => {
     setIsLoading(true);
+
     try {
       await signInWithGoogle();
 
@@ -59,8 +59,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   const handleSignInWithFacebook = async () => {
     setIsLoading(true);
+
     try {
-      await signInWithFacebook();
+      await signInWithFacebook(); 
 
     } catch (error) {
       console.error('Facebook sign in error:', error);
