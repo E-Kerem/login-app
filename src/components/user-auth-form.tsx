@@ -1,43 +1,40 @@
 "use client"
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { Button } from "@/components/button"
-import { Input } from "@/components/input"
-import { Label } from "@/components/label"
-import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient"
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
+import { Label } from "@/components/label";
+import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient";
 
-
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { 
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   
 }
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const router = useRouter(); 
-  const MAX_ATTEMPTS = 3;
-  const [failedAttempts, setFailedAttempts] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [errorMessage, setErrorMessage] = React.useState<string>(''); // State to hold error messages
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>(''); 
+
+  /*
+  const redirectUser = () => {
+    if (typeof window !== "undefined") {
+      window.location.href = '/loggedIn';  // Updated path
+    }
+  };
+  */
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
-    setErrorMessage(''); // Clear any existing error messages
 
     try {
-      const data = await signInWithEmail(email, password);
-      if (data.user && data.session) {
-
-      } else {
-        // This else block might not be necessary if all errors are thrown, but it's here for completeness
-        setErrorMessage('Failed to sign in. Please try again.');
-      }
+      await signInWithEmail(email, password);
+      //redirectUser();
     } catch (error) {
       console.error('Sign in error:', error);
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      setErrorMessage('Failed to log in. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +45,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       await signInWithGoogle();
-
+      //redirectUser()
     } catch (error) {
       console.error('Google sign in error:', error);
 
@@ -61,8 +58,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsLoading(true);
 
     try {
-      await signInWithFacebook(); 
-
+      await signInWithFacebook();
+      //redirectUser();
     } catch (error) {
       console.error('Facebook sign in error:', error);
 
@@ -102,14 +99,14 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               <div id="error-message" style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</div>
             )}
           </div>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" onClick={onSubmit} disabled={isLoading}>
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : "Sign In with Email"}
           </Button>
         </div>
       </form>
-      {/* Google Sign-in Button */}
+        {/* Google Sign-in Button */}
       <Button variant="outline" type="button" onClick={handleSignInWithGoogle} disabled={isLoading} data-testid="google-login-button">
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -118,7 +115,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         )}
         Google
       </Button>
-      {/* Facebook Sign-in Button */}
+       {/* Facebook Sign-in Button */}
       <Button variant="outline" type="button" onClick={handleSignInWithFacebook} disabled={isLoading} data-testid="facebook-login-button">
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

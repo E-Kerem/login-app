@@ -1,7 +1,6 @@
 import React from 'react';
 
-
-export default function LoginPage() {
+const LoggedInPage = () => {
     return (
         <div style={{
             fontFamily: 'Arial, sans-serif',
@@ -23,3 +22,5 @@ export default function LoginPage() {
         </div>
     );
 }
+
+export default LoggedInPage;

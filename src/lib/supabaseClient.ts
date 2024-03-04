@@ -22,8 +22,13 @@ export async function signInWithFacebook() {
 
 
 export async function signInWithEmail(email: string, password: string) {
+  const { data, error: signInError } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password,
+  });
+
   const { data: user, error } = await supabase
-    .from('users')
+    .from('user_signins')
     .select('*')
     .eq('email', email)
     .single();
@@ -32,14 +37,9 @@ export async function signInWithEmail(email: string, password: string) {
     throw new Error('Account is locked.');
   }
 
-  const { data, error: signInError } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
-
   if (signInError) {
     const { error: updateError } = await supabase
-      .from('users')
+      .from('user_signins')
       .update({ failed_attempts: user.failed_attempts + 1 })
       .eq('email', email);
     throw signInError;
