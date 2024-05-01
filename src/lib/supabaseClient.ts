@@ -8,6 +8,7 @@ export async function signInWithGoogle() {
     provider: 'google',
   });
 
+  console.log("success")
   if (error) throw error;
   return data;
 }
