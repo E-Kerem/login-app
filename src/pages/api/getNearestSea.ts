@@ -10,7 +10,7 @@ const getNearestSea = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ error: 'Missing latitude or longitude query parameters' });
     }
 
-    const apiKey = 'AIzaSyAa6rmGkc5Ri3GDrlFskD-x7kp-2lGGi84';
+    const apiKey = '';
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
     const params = {
         location: `${latitude},${longitude}`,
