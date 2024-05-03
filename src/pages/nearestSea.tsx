@@ -1,6 +1,7 @@
+// NearestSeaPage component
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 const NearestSeaPage: React.FC = () => {
     const [latitude, setLatitude] = useState<string>('Fetching...');
@@ -24,15 +25,22 @@ const NearestSeaPage: React.FC = () => {
                                 longitude: longitude
                             }
                         });
-                        setDistance(`Nearest sea: ${response.data.name}`);
+                        if (response.data && response.data.name) {
+                            setDistance(`The nearest sea, ${response.data.name}, is ${response.data.distance} away`);
+                        } else {
+                            setError('No nearest sea found');
+                        }
                     } catch (error) {
                         console.error('Failed to retrieve the nearest sea:', error);
                         setError('Failed to retrieve data for the nearest sea.');
                     }
-
                 },
-                () => {
-                    setError('Failed to retrieve your location.');
+                (error) => {
+                    if (error.code === error.PERMISSION_DENIED) {
+                        setError('Permission denied for location access.');
+                    } else {
+                        setError('Failed to retrieve your location.');
+                    }
                 },
                 { enableHighAccuracy: true }
             );

@@ -18,11 +18,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>(''); 
 
   
-  /*const redirectUser = () => {
+  const redirectUser = () => {
     if (typeof window !== "undefined") {
-      window.location.href = '/loggedIn';  // Updated path
+      window.location.href = '/nearestSea';  // Updated path
     }
-  };*/
+  };
   
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -31,7 +31,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       await signInWithEmail(email, password);
-      //redirectUser();
+      redirectUser();
     } catch (error) {
       console.error('Sign in error:', error);
       setErrorMessage('Failed to log in. Please try again.');
@@ -46,6 +46,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     try {
       await signInWithGoogle();
       console.log("sucecss")
+      redirectUser();
     } catch (error) {
       console.error('Google sign in error:', error);
 
