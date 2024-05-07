@@ -1,28 +1,99 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 
+const styles = {
+    pageContainer: {
+        fontFamily: 'Arial, sans-serif',
+        display: 'flex' as const, // Use 'as const' to ensure the type is preserved
+        flexDirection: 'column' as const, // Specify exact CSS property value types
+        justifyContent: 'center' as const,
+        alignItems: 'center' as const,
+        height: '100vh',
+        backgroundColor: '#FFF9C4',
+        color: '#FFEB3B',
+        textAlign: 'center' as const
+    },
+    header: {
+        color: '#FDD835',
+    },
+    formContainer: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        padding: '20px',
+        backgroundColor: '#FFEB3B',
+        color: '#FFF176',
+        border: '1px solid #FBC02D',
+        borderRadius: '5px',
+        maxWidth: '400px',
+        textAlign: 'center' as const,
+        boxShadow: '0px 0px 15px 5px rgba(0,0,0,0.2)'
+    },
+    inputContainer: {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        marginBottom: '20px'
+    },
+    inputField: {
+        padding: '10px',
+        margin: '5px',
+        borderRadius: '5px',
+        border: '1px solid #FBC02D',
+        width: '250px'
+    },
+    button: {
+        backgroundColor: '#FBC02D',
+        color: '#3E2723',
+        padding: '10px 20px',
+        margin: '5px',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        border: 'none'
+    },
+    distanceDisplay: {
+        fontSize: '18px',
+        color: '#000',
+        marginBottom: '10px'
+    },
+    errorText: {
+        color: '#D32F2F',
+        marginBottom: '10px'
+    },
+    backButton: {
+        marginTop: '20px',
+        padding: '10px 20px',
+        fontSize: '16px',
+        borderRadius: '5px',
+        backgroundColor: '#FBC02D',
+        color: '#3E2723',
+        cursor: 'pointer',
+        border: 'none'
+    }
+};
+
 const SunDistancePage: React.FC = () => {
-    const [distanceToSun, setDistanceToSun] = useState<string>('Calculating...');
-    const [latitude, setLatitude] = useState<string>('Fetching...');
-    const [longitude, setLongitude] = useState<string>('Fetching...');
+    const [distanceToSun, setDistanceToSun] = useState<string>('Enter coordinates or get your location to calculate distance.');
+    const [latitude, setLatitude] = useState<string>('');
+    const [longitude, setLongitude] = useState<string>('');
     const [error, setError] = useState<string>('');
     const router = useRouter();
 
-    useEffect(() => {
+    const handleCalculateClick = () => {
+        if (!latitude || !longitude) {
+            setError('Please provide both latitude and longitude.');
+            return;
+        }
+        calculateDistance(parseFloat(latitude), parseFloat(longitude));
+    };
+
+    const handleGetLocationClick = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     setLatitude(latitude.toFixed(6));
                     setLongitude(longitude.toFixed(6));
-
-                    try {
-                        const distance = calculateDistanceToSun(latitude, longitude);
-                        setDistanceToSun(`Distance to the Sun's core: ${distance.toFixed(2)} km`);
-                    } catch (error) {
-                        console.error('Failed to calculate distance to the Sun:', error);
-                        setError('Failed to calculate distance to the Sun.');
-                    }
+                    calculateDistance(latitude, longitude);
                 },
                 (error) => {
                     console.error('Geolocation error:', error);
@@ -33,51 +104,43 @@ const SunDistancePage: React.FC = () => {
         } else {
             setError('Geolocation is not supported by this browser.');
         }
-    }, []);
+    };
+
+    const calculateDistance = (lat: number, lon: number) => {
+        try {
+            const distance = calculateDistanceToSun(lat, lon);
+            setDistanceToSun(`Distance to the Sun's core: ${distance.toFixed(2)} km`);
+            setError('');
+        } catch (error) {
+            console.error('Failed to calculate distance to the Sun:', error);
+            setError('Failed to calculate distance to the Sun.');
+        }
+    };
 
     return (
-        <div style={{
-            fontFamily: 'Arial, sans-serif',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            backgroundColor: '#FFF9C4',  // Light yellow background
-            color: '#FFEB3B'  // Yellow text for contrast
-        }}>
-            <h1 style={{ color: '#FDD835' }}>Distance to the Sun</h1>
-            <div style={{
-                padding: '20px',
-                backgroundColor: '#FFEB3B',  // Bright yellow for the inner box
-                color: '#FFF176',  // Light yellow text for details
-                border: '1px solid #FBC02D',  // Dark yellow border
-                borderRadius: '5px',
-                maxWidth: '400px',
-                textAlign: 'center',
-                boxShadow: '0px 0px 15px 5px rgba(0,0,0,0.2)'  // Soft shadow for 3D effect
-            }}>
-                {error ? <p>{error}</p> : (
-                    <>
-                        <p data-testid="latitude" style={{ color: '#000' }}>Latitude: {latitude}</p>
-                        <p data-testid="longitude" style={{ color: '#000' }}>Longitude: {longitude}</p>
-                        <p data-testid="distance-to-sun" style={{ color: '#000' }}>{distanceToSun}</p>
-                    </>
-                )}
+        <div style={styles.pageContainer}>
+            <h1 style={styles.header}>Distance to the Sun</h1>
+            <div style={styles.inputContainer}>
+                <input
+                    type="text"
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value)}
+                    placeholder="Enter latitude"
+                    style={styles.inputField}
+                />
+                <input
+                    type="text"
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value)}
+                    placeholder="Enter longitude"
+                    style={styles.inputField}
+                />
+                <button onClick={handleCalculateClick} style={styles.button}>Calculate Distance</button>
+                <button onClick={handleGetLocationClick} style={styles.button}>Get My Location</button>
             </div>
-            <button onClick={() => router.push('/')} style={{
-                marginTop: '20px',
-                padding: '10px 20px',
-                fontSize: '16px',
-                borderRadius: '5px',
-                border: 'none',
-                backgroundColor: '#FBC02D',  // Darker yellow button
-                color: '#3E2723',  // Deep brown text to ensure readability
-                cursor: 'pointer',
-                boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)'
-            }}>
-                Back to Home
-            </button>
+            <p style={styles.distanceDisplay}>{distanceToSun}</p>
+            {error && <p style={styles.errorText}>{error}</p>}
+            <button onClick={() => router.push('/')} style={styles.backButton}>Back to Home</button>
         </div>
     );
 };
@@ -88,10 +151,7 @@ function calculateDistanceToSun(latitude: number, longitude: number): number {
     const eccentricity = 0.0167;
     const semiMajorAxis = 149600000; // Average distance to sun in km
 
-    // Calculate current distance from the Earth to the Sun
     const distanceToSun = semiMajorAxis * (1 - eccentricity * Math.cos(2 * Math.PI * (dayOfYear - 3) / 365.25));
-
-    // Adjustment for Earth's rotation
     const earthRadius = 6371; // in kilometers
     const timeOffset = (date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600 + longitude / 15) % 24;
     const angleFromSun = 2 * Math.PI * (timeOffset / 24);
@@ -106,5 +166,7 @@ function getDayOfYear(date: Date): number {
     const oneDay = 1000 * 60 * 60 * 24;
     return Math.floor(diff / oneDay);
 }
+
+
 
 export default SunDistancePage;
