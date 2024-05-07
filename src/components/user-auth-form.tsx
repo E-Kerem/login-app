@@ -1,3 +1,5 @@
+//src/components/user-auth-form.tsx
+
 "use client"
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +9,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
 import { signInWithEmail, signInWithFacebook, signInWithGoogle } from "@/lib/supabaseClient";
-
+import { redirect } from 'next/navigation'
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   
 }
@@ -17,13 +19,13 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>(''); 
 
-  /*
+  
   const redirectUser = () => {
     if (typeof window !== "undefined") {
-      window.location.href = '/loggedIn';  // Updated path
+      window.location.href = '/nearestSea';  // Updated path
     }
   };
-  */
+  
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -31,7 +33,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       await signInWithEmail(email, password);
-      //redirectUser();
+      redirectUser();
     } catch (error) {
       console.error('Sign in error:', error);
       setErrorMessage('Failed to log in. Please try again.');
@@ -45,7 +47,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       await signInWithGoogle();
-      //redirectUser()
+      console.log("sucecss")
+      redirectUser();
     } catch (error) {
       console.error('Google sign in error:', error);
 
