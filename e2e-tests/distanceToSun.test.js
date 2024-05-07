@@ -13,14 +13,11 @@ describe('SunDistancePage', () => {
   it('allows manual entry of latitude and longitude and displays calculated distance', async () => {
     render(<SunDistancePage />);
     
-    // Enter latitude and longitude
     fireEvent.change(screen.getByPlaceholderText('Enter latitude'), { target: { value: '34.0522' } });
     fireEvent.change(screen.getByPlaceholderText('Enter longitude'), { target: { value: '-118.2437' } });
     
-    // Click on the calculate distance button
     fireEvent.click(screen.getByText('Calculate Distance'));
 
-    // Check for calculated distance display
     await waitFor(() => {
       expect(screen.getByText(/Distance to the Sun's core:/)).toHaveTextContent(/km/);
     });
@@ -40,10 +37,8 @@ describe('SunDistancePage', () => {
 
     render(<SunDistancePage />);
     
-    // Trigger geolocation
     fireEvent.click(screen.getByText('Get My Location'));
 
-    // Verify the distance is displayed
     await waitFor(() => {
       expect(screen.getByText(/Distance to the Sun's core:/)).toHaveTextContent(/km/);
     });
@@ -58,10 +53,8 @@ describe('SunDistancePage', () => {
 
     render(<SunDistancePage />);
     
-    // Trigger geolocation
     fireEvent.click(screen.getByText('Get My Location'));
 
-    // Check for error message
     await waitFor(() => {
       expect(screen.getByText(/Failed to retrieve your location./)).toBeInTheDocument();
     });

@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 const styles = {
     pageContainer: {
         fontFamily: 'Arial, sans-serif',
-        display: 'flex' as const, // Use 'as const' to ensure the type is preserved
-        flexDirection: 'column' as const, // Specify exact CSS property value types
+        display: 'flex' as const, 
+        flexDirection: 'column' as const, 
         justifyContent: 'center' as const,
         alignItems: 'center' as const,
         height: '100vh',
@@ -149,15 +149,15 @@ function calculateDistanceToSun(latitude: number, longitude: number): number {
     const date = new Date();
     const dayOfYear = getDayOfYear(date);
     const eccentricity = 0.0167;
-    const semiMajorAxis = 149600000; // Average distance to sun in km
+    const semiMajorAxis = 149600000; 
 
     const distanceToSun = semiMajorAxis * (1 - eccentricity * Math.cos(2 * Math.PI * (dayOfYear - 3) / 365.25));
-    const earthRadius = 6371; // in kilometers
+    const earthRadius = 6371; 
     const timeOffset = (date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600 + longitude / 15) % 24;
     const angleFromSun = 2 * Math.PI * (timeOffset / 24);
     const distanceAdjustment = earthRadius * Math.cos(latitude * Math.PI / 180) * Math.sin(angleFromSun);
 
-    return distanceToSun + distanceAdjustment; // in kilometers
+    return distanceToSun + distanceAdjustment; 
 }
 
 function getDayOfYear(date: Date): number {
