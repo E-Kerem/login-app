@@ -74,7 +74,7 @@ describe('UserAuthForm Component', () => {
 
   it('should redirect after successful Google sign-in', async () => {
     jest.mock('@/lib/supabaseClient', () => ({
-      signInWithGoogle: jest.fn().mockResolvedValue({ user: { id: '123' } }),
+      signInWithGoogle: jest.fn().mockResolvedValue({ user: { id: '12' } }),
       signInWithFacebook: jest.fn(),
       signInWithEmail: jest.fn()
     }));
@@ -88,7 +88,7 @@ describe('UserAuthForm Component', () => {
 
   it('should redirect after successful Facebook sign-in', async () => {
     jest.mock('@/lib/supabaseClient', () => ({
-      signInWithFacebook: jest.fn().mockResolvedValue({ user: { id: '123' } }),
+      signInWithFacebook: jest.fn().mockResolvedValue({ user: { id: '12' } }),
       signInWithGoogle: jest.fn(),
       signInWithEmail: jest.fn()
     }));
