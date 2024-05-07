@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import NearestSeaPage from '../src/pages/nearestSea';
 import axios from 'axios';
-import '@testing-library/jest-dom';  // Ensure jest-dom extensions are imported
+import '@testing-library/jest-dom';  
 
 jest.mock('axios');
 jest.mock('next/router', () => ({ useRouter: jest.fn() }));
@@ -31,8 +31,7 @@ describe('Nearest Sea Page', () => {
     });
 
     it('displays the latitude and longitude of the user correctly', async () => {
-      render(<NearestSeaPage />);
-
+        render(<NearestSeaPage />);
         await waitFor(() => {
             const latitudeText = screen.getByTestId('latitude');
             const longitudeText = screen.getByTestId('longitude');
@@ -42,18 +41,15 @@ describe('Nearest Sea Page', () => {
     });
 
     it('displays an error if the geolocation fails', async () => {
-      // Ensure the mock simulates a geolocation error
-      mockGeolocation.getCurrentPosition.mockImplementationOnce((_, reject) =>
-          reject({ code: 1, message: 'Permission denied' })
-      );
-  
-      render(<NearestSeaPage />);
-      await waitFor(() => {
-          // This message should match the one set in the component when geolocation fails
-          expect(screen.getByText(/Permission denied for location access./i)).toBeInTheDocument();
-      });
-  });
-  
+        mockGeolocation.getCurrentPosition.mockImplementationOnce((_, reject) =>
+            reject({ code: 1, message: 'Permission denied' })
+        );
+
+        render(<NearestSeaPage />);
+        await waitFor(() => {
+            expect(screen.getByText(/Permission denied for location access./i)).toBeInTheDocument();
+        });
+    });
 
     it('displays an error if the API call fails', async () => {
         mockGeolocation.getCurrentPosition.mockImplementationOnce((success) => Promise.resolve(success({
@@ -80,7 +76,7 @@ describe('Nearest Sea Page', () => {
             }))
         );
 
-        axios.get.mockResolvedValue({ data: {} });  // Assuming the API returns an empty object for no data
+        axios.get.mockResolvedValue({ data: {} }); 
 
         render(<NearestSeaPage />);
         await waitFor(() => {

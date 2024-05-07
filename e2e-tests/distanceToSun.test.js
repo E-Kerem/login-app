@@ -10,14 +10,34 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('SunDistancePage', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     global.navigator.geolocation = {
-      getCurrentPosition: jest.fn()
+      getCurrentPosition: jest.fn().mockImplementation((success) => success({
+        coords: {
+          latitude: 39.863722,
+          longitude: 32.746838
+        }
+      }))
     };
+    render(<SunDistancePage />);
+  });
+  
+  it('displays the latitude and longitude of the user correctly', async () => {
+    render(<SunDistancePage />);
+
+      await waitFor(() => {
+        const latitudeTexts = screen.getAllByTestId('latitude');
+        latitudeTexts.forEach(latitudeText => {
+          expect(latitudeText.textContent).toMatch(/Latitude: 39.863722/);
+        });
+        const longitudeTexts = screen.getAllByTestId('longitude');
+        longitudeTexts.forEach(longitudeText => {
+          expect(longitudeText.textContent).toMatch(/Longitude: 32.746838/);
+        });
+      });
   });
 
   it('displays distance to the sun when geolocation succeeds', async () => {
-    // Mock getCurrentPosition to call the success callback
     navigator.geolocation.getCurrentPosition.mockImplementationOnce((success) =>
       success({
         coords: {
@@ -26,17 +46,19 @@ describe('SunDistancePage', () => {
         }
       })
     );
-
+  
     render(<SunDistancePage />);
     
-    // Wait for the component to update based on the geolocation
     await waitFor(() => {
-      expect(screen.getByTestId('distance-to-sun')).toHaveTextContent(/Distance to the Sun's core: \d+\.?\d* km/);
+      const distanceElements = screen.getAllByTestId('distance-to-sun');
+      distanceElements.forEach(element => {
+        expect(element).toHaveTextContent(/Distance to the Sun's core: \d+\.?\d* km/);
+      });
     });
   });
+  
 
   it('displays an error if geolocation fails', async () => {
-    // Mock getCurrentPosition to call the error callback
     navigator.geolocation.getCurrentPosition.mockImplementationOnce((_, error) =>
       error(new Error('Geolocation error'))
     );

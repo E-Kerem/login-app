@@ -43,15 +43,15 @@ const SunDistancePage: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
-            backgroundColor: '#0e1a35',  // Dark navy blue background for a space theme
-            color: '#ffffff'  // White text for contrast
+            backgroundColor: '#FFF9C4',  // Light yellow background
+            color: '#FFEB3B'  // Yellow text for contrast
         }}>
-            <h1 style={{ color: '#ffcc00' }}>Distance to the Sun</h1>
+            <h1 style={{ color: '#FDD835' }}>Distance to the Sun</h1>
             <div style={{
                 padding: '20px',
-                backgroundColor: '#223366',  // Darker blue for the inner box
-                color: '#ffcc00',  // Golden text for key details
-                border: '1px solid #ffcc00',  // Golden border
+                backgroundColor: '#FFEB3B',  // Bright yellow for the inner box
+                color: '#FFF176',  // Light yellow text for details
+                border: '1px solid #FBC02D',  // Dark yellow border
                 borderRadius: '5px',
                 maxWidth: '400px',
                 textAlign: 'center',
@@ -59,9 +59,9 @@ const SunDistancePage: React.FC = () => {
             }}>
                 {error ? <p>{error}</p> : (
                     <>
-                        <p>Latitude: {latitude}</p>
-                        <p>Longitude: {longitude}</p>
-                        <p data-testid="distance-to-sun">{distanceToSun}</p>
+                        <p data-testid="latitude" style={{ color: '#000' }}>Latitude: {latitude}</p>
+                        <p data-testid="longitude" style={{ color: '#000' }}>Longitude: {longitude}</p>
+                        <p data-testid="distance-to-sun" style={{ color: '#000' }}>{distanceToSun}</p>
                     </>
                 )}
             </div>
@@ -71,8 +71,8 @@ const SunDistancePage: React.FC = () => {
                 fontSize: '16px',
                 borderRadius: '5px',
                 border: 'none',
-                backgroundColor: '#ffcc00',  // Golden button
-                color: '#0e1a35',  // Text color of the button to dark navy blue
+                backgroundColor: '#FBC02D',  // Darker yellow button
+                color: '#3E2723',  // Deep brown text to ensure readability
                 cursor: 'pointer',
                 boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)'
             }}>
